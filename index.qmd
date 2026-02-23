@@ -1,0 +1,24 @@
+---
+title: "{{< meta titles.full >}}"
+---
+
+{{< include /docs/includes/_badges.qmd >}}
+
+This website is for describing the design of some of our GitHub
+workflows as well as how to use some of them.
+
+## Want to contribute?
+
+We would love your feedback or contributions! Head over to our
+[GitHub repository]({{< meta links.github >}}) to share your ideas or
+contribute code. Your input makes us better!
+
+::: content-hidden
+### Contributors
+
+{{< include /docs/includes/_contributors.qmd >}}
+:::
+
+## Licensing
+
+This project is licensed under the [MIT License](/LICENSE.md).

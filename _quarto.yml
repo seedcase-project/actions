@@ -1,0 +1,42 @@
+project:
+  type: seedcase-theme
+
+website:
+  title: "Seedcase Actions"
+  site-url: "https://actions.seedcase-project.org"
+  repo-url: "https://github.com/seedcase-project/actions"
+  page-navigation: true
+  navbar:
+    logo: _extensions/seedcase-project/seedcase-theme/logos/seedcase/icon.svg
+    logo-alt: "Seedcase Project logo: Main page"
+    pinned: true
+    left:
+      - text: "Overview"
+        href: index.qmd
+      - text: "Guide"
+        href: docs/guide.qmd
+      - text: "Design"
+        href: docs/design.qmd
+    tools:
+      - icon: github
+        href: "https://github.com/seedcase-project/actions"
+        aria-label: "GitHub icon: Source code"
+      - icon: house
+        href: https://seedcase-project.org
+        aria-label: "House icon: Seedcase Project home page"
+  sidebar:
+    - id: overview
+      pinned: true
+      style: "floating"
+      contents:
+        - text: "Welcome"
+          href: index.qmd
+        - CHANGELOG.md
+        - CONTRIBUTING.md
+
+format:
+  seedcase-theme-html:
+    theme:
+      - brand
+    include-before-body:
+    - "docs/includes/site-counter.html"

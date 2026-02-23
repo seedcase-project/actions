@@ -1,0 +1,5 @@
+- source: project
+  netlify:
+    # TODO: Update
+    - id: ""
+      url: "https://seedcase-actions.netlify.app"
