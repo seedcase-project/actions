@@ -1,0 +1,68 @@
+---
+format: gfm
+execute:
+  echo: false
+jupyter: python3
+metadata-files:
+  - _metadata.yml
+---
+
+# {{< meta titles.full >}}
+
+{{< include /docs/includes/_badges.qmd >}}
+
+This repository contains GitHub
+[reusable workflows](https://docs.github.com/en/actions/how-tos/reuse-automations/reuse-workflows)
+and [actions](https://docs.github.com/en/actions/get-started/quickstart)
+that we use in the Seedcase Project for making our work easier and more
+efficient. We also use these workflows in projects that we collaborate
+on, such as [ON-LiMiT](https://onlimit.org) and
+[DP-Next](https://dp-next.github.io).
+
+Check out our [website]({{< meta links.site >}}) for more information,
+such as the features it provides and a
+[guide]({{< meta links.site >}}/docs/guide/) to using the GitHub actions
+and workflows. For
+a list of changes, see our
+[changelog]({{< meta links.site >}}/docs/releases/) page.
+
+## Contributing
+
+Check out our [contributing page]({{< meta links.site >}}/contributing/)
+for information on how to contribute to the project, including how to
+set up your development environment.
+
+Please note that this project is released with a
+[Contributor Code of Conduct](https://github.com/seedcase-project/.github/blob/main/CODE_OF_CONDUCT.md).
+By participating in this project you agree to abide by its terms.
+
+::: content-hidden
+### Contributors
+
+{{< include /docs/includes/_contributors.qmd >}}
+:::
+
+## Licensing
+
+This project is licensed under the
+[MIT License]({{< meta links.github >}}/blob/main/LICENSE.md).
+
+::: content-hidden
+## Citing
+
+This project is part of the Seedcase Project, which is a collaborative
+effort to create a framework for data management and analysis in
+research. If you use this project in your work, please cite it as
+follows:
+
+```{python}
+#| output: asis
+!uvx --quiet cffconvert --format apalike
+```
+
+Or as a BibTeX entry:
+
+```{python}
+!uvx --quiet cffconvert --format bibtex
+```
+:::
