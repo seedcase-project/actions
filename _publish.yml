@@ -1,5 +1,4 @@
 - source: project
   netlify:
-    # TODO: Update
-    - id: ""
+    - id: "e35b6754-3de5-4953-b49a-63c63c86b922"
       url: "https://seedcase-actions.netlify.app"
