@@ -1,0 +1,120 @@
+---
+title: "PDF to Zenodo"
+---
+
+This document outlines the general flow for generating a PDF from a
+Quarto profile/book, creating a GitHub release, attaching the PDF to the
+release, and then creating/updating a Zenodo deposit with the PDF and
+metadata.
+
+There's several stages to this process:
+
+1. Create a GitHub release based on the commit message, including using
+   the changelog as the text and updating the `.zenodo.json` file with
+   the new version and date.
+
+2. If a new release is created, render the PDF (and HTML?) using Quarto
+   and attach it to the latest GitHub release.
+
+3. Check if the repository already has an existing Zenodo deposit.
+
+4. If no deposit exists, create a new one using the metadata from the
+   `.zenodo.json` file, and upload the PDF as a file.
+
+5. If a deposit already exists, update the existing deposit with the new
+   version and PDF, and publish as a new version.
+
+This functionality will be implemented within a Python package that a
+GitHub workflow can install and use. Since the `actions` package may
+contain other functionality in the future, the functions for the
+Zenodo-specific workflow (not the updating GitHub release steps) will be
+contained within a `zenodo` module, so all functions will be namespaced
+as `zenodo.function_name` to keep a clear separation.
+
+## Updating GitHub release
+
+Most of this functionality is already implemented in our `release`
+workflow, however, we are missing the steps to add the changelog to the
+release text, to add the PDF as an artifact to the release, and to
+update the `.zenodo.json` file with the new version.
+
+This flow chart outlines the general flow from object (`PascalCase`) to
+object through an action (`snake_case`).
+
+```{mermaid}
+%%| label: fig-github-release-flow
+%%| fig-cap: "Diagram of the flow for creating a GitHub release from bumpable commits, attaching the changelog text as well as PDF artifact. Objects are in `PascalCase` and actions are in `snake_case`."
+flowchart TB
+    Commits --> get_bumpable_commits --> OptionBumpableCommits & OptionNoBumpableCommits
+    OptionNoBumpableCommits --> exit_workflow
+    get_current_version --> CurrentVersion --> bump_version
+    OptionBumpableCommits --> bump_version --> NewVersion
+    NewVersion --> create_tag --> NewVersionTag
+    NewVersionTag --> create_release --> NewVersionRelease
+
+    NewVersion --> set_version --> ZenodoJSON
+    set_current_date --> ZenodoJSON
+
+    OptionBumpableCommits --> generate_changelog --> NewVersionChangelog
+    QuartoProfilePDF --> build_pdf --> ResultBuiltPDF & ResultPDFError
+    ResultBuiltPDF --> attach_release_artifact --> NewVersionRelease
+    ResultBuiltPDF --> set_workflow_output --> WorkflowArtifact
+    NewVersionChangelog --> set_release_text --> NewVersionRelease
+    NewVersionRelease --> set_workflow_output --> IsNewRelease
+```
+
+### Checking for if a Zenodo deposit exists
+
+The next steps depend on whether a Zenodo deposit already exists for the
+repository. So this workflow only needs to check if a record exists for
+the repository and then later workflows can branch based on whether a
+record exists or not. This workflow should only run if a new release is
+created.
+
+```{mermaid}
+%%| label: fig-check-zenodo-deposit
+%%| fig-cap: "Diagram of the flow for checking if a Zenodo deposit already exists for the repository. Objects are in `PascalCase` and actions are in `snake_case`."
+flowchart TB
+    %% Zenodo API
+    IsNewRelease -->|true| get_account_records --> ZenodoAccountRecords
+    ZenodoAccountRecords & RepoURL --> check_repo_record --> HasRecord
+```
+
+### Create new Zenodo deposit
+
+This workflow should run if no existing Zenodo deposit exists for the
+repository and when there is a new release. They aren't clear in their
+documentation, but a deposit seems to be an object that is published,
+while a record seems to be something that is in draft or editable state.
+
+```{mermaid}
+flowchart TB
+    HasRecord -->|No| create_draft_record --> DraftRecord
+    ZenodoJSON --> set_metadata --> DraftRecord
+    PDF --> set_file --> DraftRecord
+    DraftRecord --> publish_record --> PublishedDeposit
+```
+
+### Update an existing Zenodo deposit
+
+Things get a bit more complicated if a deposit already exists. Because
+of the way that Zenodo handles updates to records, for every small
+update or change to the metadata of the record, we have to send requests
+through their API. Which means that the record object is directly
+changed and doesn't get passed around as an object in functions.
+However, for this diagram, we use different object names to represent
+their state at any given time.
+
+This workflow will only be triggered if there is a new release and if
+the repository already has a deposit.
+
+```{mermaid}
+flowchart TB
+    HasRecord -->|Yes| get_record --> Record
+    Record --> as_editable --> EditableRecord
+    EditableRecord & ZenodoJSON --> put_metadata --> UpdatedRecord
+    UpdatedRecord --> get_record_files --> RecordFiles
+    UpdatedRecord & RecordFiles --> delete_files --> DeletedFilesRecord
+    WorkflowArtifact & DeletedFilesRecord --> set_file --> NewFilesRecord
+    NewFilesRecord --> publish_new_version --> PublishedDeposit
+```
