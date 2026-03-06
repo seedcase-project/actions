@@ -2,7 +2,11 @@
   "files.autoSave": "onFocusChange",
   "editor.wordWrap": "off",
   "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "always"
+  },
   "git.autofetch": false,
+  "autoDocstring.customTemplatePath": ".vscode/google-notypes.mustache",
   "editor.tabCompletion": "on",
   "editor.snippetSuggestions": "inline",
   "conventional-branch.type": [
@@ -15,19 +19,20 @@
     "style",
     "test",
     "chore",
-    "revert",
-    "perf"
+    "perf",
+    "revert"
   ],
   "conventional-branch.format": "{Type}/{Branch}",
-  "[quarto][qmd][jinja]": {
+  "[quarto][qmd]": {
     "editor.formatOnSave": false
   },
-  "files.associations": {
-    "justfile.jinja": "plaintext",
-    "*.yml.jinja": "jinja-yaml",
-    "*.cff.jinja": "jinja-yaml",
-    "*.toml.jinja": "jinja-toml",
-    "*.qmd.jinja": "jinja-md"
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff"
   },
-  "files.insertFinalNewline": true
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv",
+  "python.languageServer": "Pylance",
+  "files.insertFinalNewline": true,
+  "python.testing.pytestEnabled": true,
+  "python.testing.pytestPath": "${workspaceFolder}/.venv/bin/pytest",
+  "mypy.runUsingActiveInterpreter": true,
 }
