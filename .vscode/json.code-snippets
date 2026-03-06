@@ -46,5 +46,21 @@
       "|   |   |   |"
     ],
     "description": "Insert a 3 col table"
+  },
+  "Insert paneltab": {
+    "scope": "quarto,markdown",
+    "prefix": "paneltab",
+    "body": [
+      "::: panel-tabset",
+      "### ${0:Header}",
+      "",
+      "${1:Text body}",
+      "",
+      "### ${2:Header}",
+      "",
+      "${3:Text body}",
+      ":::"
+    ],
+    "description": "Insert paneltab (including two tabs here). If you want additional tabs, just include more headers."
   }
 }
