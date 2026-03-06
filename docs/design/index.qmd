@@ -1,3 +1,11 @@
 ---
 title: "Design"
 ---
+
+This section contains design docs for specific workflows. For now we
+only have one:
+
+- [PDF to Zenodo](pdf-to-zenodo.qmd): Workflow to create a GitHub
+  release with a Quarto-generated PDF that takes that PDF along with
+  Zenodo metadata and creates a new or updates an existing Zenodo
+  deposit.

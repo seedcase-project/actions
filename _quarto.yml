@@ -38,6 +38,7 @@ website:
       contents:
         - text: "Design"
           href: docs/design/index.qmd
+        - docs/design/pdf-to-zenodo.qmd
     - id: guide
       contents:
         - section: "Guide"
