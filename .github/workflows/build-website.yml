@@ -10,6 +10,6 @@ permissions: read-all
 
 jobs:
   build-website:
-    uses: seedcase-project/.github/.github/workflows/reusable-build-docs.yml@main
+    uses: seedcase-project/.github/.github/workflows/reusable-build-docs-with-python.yml@main
     secrets:
       netlify-token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
