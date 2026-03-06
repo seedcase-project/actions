@@ -7,32 +7,56 @@ website:
   repo-url: "https://github.com/seedcase-project/actions"
   page-navigation: true
   navbar:
-    logo: _extensions/seedcase-project/seedcase-theme/logos/seedcase/icon.svg
-    logo-alt: "Seedcase Project logo: Main page"
     pinned: true
+    logo: "_extensions/seedcase-project/seedcase-theme/logos/seedcase/icon.svg"
+    logo-alt: "Seedcase logo: Main page"
     left:
       - text: "Overview"
-        href: index.qmd
+        href: docs/index.qmd
       - text: "Guide"
-        href: docs/guide.qmd
+        href: docs/guide/index.qmd
       - text: "Design"
-        href: docs/design.qmd
+        href: docs/design/index.qmd
+      # - text: "Reference"
+      #   href: docs/reference/index.qmd
     tools:
       - icon: github
         href: "https://github.com/seedcase-project/actions"
         aria-label: "GitHub icon: Source code"
       - icon: house
-        href: https://seedcase-project.org
-        aria-label: "House icon: Seedcase Project home page"
+        href: "https://seedcase-project.org"
+        aria-label: "House icon: Main website for the Seedcase Project"
   sidebar:
     - id: overview
       pinned: true
       style: "floating"
       contents:
-        - text: "Welcome"
-          href: index.qmd
-        - CHANGELOG.md
+        - docs/index.qmd
+        - CHANGELOG.qmd
         - CONTRIBUTING.md
+    - id: design
+      contents:
+        - text: "Design"
+          href: docs/design/index.qmd
+    - id: guide
+      contents:
+        - section: "Guide"
+          href: docs/guide/index.qmd
+
+# quartodoc:
+#   sidebar: "docs/reference/_sidebar.yml"
+#   style: "pkgdown"
+#   dir: "docs/reference"
+#   package: "actions"
+#   parser: google
+#   dynamic: true
+#   renderer:
+#     style: _renderer.py
+#     table_style: description-list
+#     show_signature_annotations: true
+
+# metadata-files:
+#   - docs/reference/_sidebar.yml
 
 format:
   seedcase-theme-html:
