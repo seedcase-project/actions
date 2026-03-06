@@ -2,24 +2,31 @@ title: "GitHub Actions for developing Seedcase products"
 abstract: |
   The Seedcase Project's GitHub Actions and workflows for running checks on
   repositories, automating project management tasks, setting up continuous
-  integration and delivery, and more.
+  integration and delivery, and more. See the
+  <a href="https://flower.seedcase-project.org">website</a> for more information.
 authors:
-  - family-names: Johnston
-    given-names: Luke William
-    orcid: "https://orcid.org/0000-0003-4169-2616"
-    affiliation: "Steno Diabetes Center Aarhus"
   - family-names: Brødbæk
     given-names: Signe Kirk
     affiliation: "Steno Diabetes Center Aarhus"
     orcid: "https://orcid.org/0009-0000-2208-7088"
+  - family-names: Johnston
+    given-names: Luke William
+    orcid: "https://orcid.org/0000-0003-4169-2616"
+    affiliation: "Steno Diabetes Center Aarhus"
+  - family-names: Vago
+    given-names: Marton
+    affiliation: "Steno Diabetes Center Aarhus"
+    orcid: "https://orcid.org/0009-0007-4628-655X"
 cff-version: 1.2.0
-# doi: ""
+# doi:
 # date-released: ""
 keywords:
   - "GitHub actions"
   - "reusable actions"
   - "GitHub workflows"
+  - "continuous integration"
+  - "continuous delivery"
 license: MIT
-message: "If you use any of these GitHub workflows, please cite it using these metadata."
+message: "If you use this Python package, please cite it using these metadata."
 repository-code: "https://github.com/seedcase-project/actions"
 url: "https://actions.seedcase-project.org"

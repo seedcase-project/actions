@@ -1,8 +1,6 @@
-# Metadata for the website
 gh:
-  org: "seedcase-project"
-  repo: "actions"
-
+  repo: actions
+  org: seedcase-project
 titles:
   full: "GitHub Actions for continuous integration and delivery of Seedcase repositories"
   short: "Seedcase Actions"
