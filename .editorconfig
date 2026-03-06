@@ -1,5 +1,5 @@
 # EditorConfig settings. Some editors will read these automatically;
-# for those that don't, see here: http://editorconfig.org/
+# for those that don't, see here: https://editorconfig.org/
 
 root = true
 
@@ -15,3 +15,8 @@ max_line_length = 88
 # Have a bit shorter line length for text docs
 [*.{txt,md,qmd}]
 max_line_length = 72
+
+# Python always uses 4 spaces for tabs
+[*.py]
+indent_style = space
+indent_size = 4
