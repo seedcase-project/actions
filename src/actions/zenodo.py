@@ -1,12 +1,11 @@
 def zenodo_record_exists(token: str) -> bool:  # noqa: ARG001
-    """Check whether a Zenodo concept record already exists for the repository.
+    """Check whether a Zenodo record already exists for the repository.
 
     Args:
         token: Zenodo API access token.
 
     Returns:
-        True if a concept record already exists for the repository,
-        otherwise False.
+        True if a record already exists for the repository, False otherwise.
     """
     return False
 
