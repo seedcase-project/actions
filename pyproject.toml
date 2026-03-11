@@ -16,13 +16,18 @@ readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE.md"]
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "cyclopts>=4.8.0",
+]
 
 [project.urls]
 homepage = "https://actions.seedcase-project.org"
 repository = "https://github.com/seedcase-project/actions"
 changelog = "https://github.com/seedcase-project/actions/blob/main/CHANGELOG.md"
 issues = "https://github.com/seedcase-project/actions/issues"
+
+[project.scripts]
+actions = "actions.cli:app"
 
 [build-system]
 requires = ["hatchling"]
