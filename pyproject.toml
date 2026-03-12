@@ -1,6 +1,6 @@
 [project]
 name = "actions"
-version = "0.1.0"
+version = "0.2.0"
 description = "Python package and GitHub reusable workflows for continuous integration and delivery of Seedcase repositories."
 authors = [
   {name = "Signe Kirk Brødbæk", email = "signekb@clin.au.dk" },
