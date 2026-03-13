@@ -67,8 +67,8 @@ class ZenodoLinks(ZenodoModel):
         bucket: The file upload link for the record.
     """
 
-    # Default to "" for published records, which cannot be edited
-    bucket: str = ""
+    # Published records cannot receive new file uploads
+    bucket: Optional[str] = None
 
 
 class ZenodoRecord(ZenodoModel):
