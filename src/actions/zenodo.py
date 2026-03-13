@@ -99,6 +99,7 @@ def zenodo_get_record(token: str) -> Optional[ZenodoRecord]:
     response = requests.get(
         "https://zenodo.org/api/deposit/depositions",
         headers={"Authorization": f"Bearer {token}"},
+        timeout=10,
     )
     response.raise_for_status()
     records: list[ZenodoRecord] = _map(response.json(), ZenodoRecord.model_validate)
