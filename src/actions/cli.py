@@ -4,7 +4,7 @@ from cyclopts import App
 
 from actions.zenodo import (
     zenodo_create_record,
-    zenodo_record_exists,
+    zenodo_get_record,
     zenodo_update_record,
 )
 
@@ -24,8 +24,8 @@ def zenodo_publish() -> None:
     if not token:
         raise RuntimeError("ZENODO_TOKEN environment variable is not set.")
 
-    if zenodo_record_exists(token):
-        zenodo_update_record(token)
+    if record := zenodo_get_record(token):
+        zenodo_update_record(token, record.id)
         print("Zenodo record updated successfully!")
     else:
         zenodo_create_record(token)
