@@ -29,8 +29,7 @@ def _zenodo_metadata() -> ZenodoMetadata:
         related_identifiers=[
             ZenodoRelatedIdentifier(
                 identifier="https://github.com/test-repo",
-                relation="isIdenticalTo",
-                scheme="url",
+                relation="IsDerivedFrom",
                 resource_type="other",
             )
         ],
@@ -61,8 +60,7 @@ def _make_record(
             related_identifiers=[
                 ZenodoRelatedIdentifier(
                     identifier=repo_url,
-                    relation="isIdenticalTo",
-                    scheme="url",
+                    relation="IsDerivedFrom",
                     resource_type="other",
                 )
             ],
@@ -99,8 +97,7 @@ def test_returns_record_if_matching_record_has_at_least_one_matching_identifier(
     fetched_record["metadata"]["related_identifiers"].append(
         {
             "identifier": "https://github.com/another-repo",
-            "scheme": "url",
-            "relation": "isIdenticalTo",
+            "relation": "IsDerivedFrom",
             "resource_type": "other",
         }
     )
@@ -164,8 +161,7 @@ def test_raises_error_if_zenodo_json_has_multiple_repo_urls(
     _zenodo_metadata.related_identifiers.append(
         ZenodoRelatedIdentifier(
             identifier="https://github.com/another-repo",
-            relation="isIdenticalTo",
-            scheme="url",
+            relation="IsDerivedFrom",
             resource_type="other",
         )
     )

@@ -88,6 +88,9 @@ class ZenodoRecord(ZenodoModel):
 def zenodo_get_record(token: str) -> Optional[ZenodoRecord]:
     """Gets the Zenodo record for the repository if it exists.
 
+    Gets the repository URL from the `.zenodo.json` file. If one
+    doesn't exist, this function will not work.
+
     Args:
         token: Zenodo API access token.
 
@@ -108,15 +111,15 @@ def zenodo_get_record(token: str) -> Optional[ZenodoRecord]:
         lambda record: bool(
             _filter(
                 record.metadata.related_identifiers,
-                lambda id: id.relation == "isIdenticalTo" and id.identifier == repo_url,
+                lambda id: id.relation == "IsDerivedFrom" and id.identifier == repo_url,
             )
         ),
     )
 
     if len(matching_records) > 1:
         raise ValueError(
-            "Cannot identify Zenodo record because multiple records exist on Zenodo "
-            f"with {repo_url!r} as a related identifier."
+            "There are multiple records on Zenodo with the repository URL"
+            f"{repo_url!r} as a 'related identifier'. We only allow one."
         )
     if not matching_records:
         return None
@@ -150,12 +153,13 @@ def _get_repo_url() -> str:
     metadata = _load_zenodo_json()
     ids = _filter(
         metadata.related_identifiers,
-        lambda id: id.relation == "isIdenticalTo" and id.scheme == "url",
+        lambda id: id.relation == "IsDerivedFrom",
     )
     if len(ids) != 1:
         raise ValueError(
-            "Expected 1 URL-type related identifier in `.zenodo.json` "
-            f"but found {len(ids)}."
+            "Expected one (1) `IsDerivedFrom` related identifier in `.zenodo.json` "
+            f"but found {len(ids)}. The identifier is used to find the matching "
+            "Zenodo record and should contain the repository URL."
         )
 
     return ids[0].identifier
