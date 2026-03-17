@@ -83,6 +83,8 @@ class ZenodoRecord(ZenodoModel):
         id: The ID of the record.
         metadata: The metadata the record.
         links: Links to record assets and API endpoints.
+        state: The state of the record.
+        submitted: Whether the record has been published.
     """
 
     id: int
