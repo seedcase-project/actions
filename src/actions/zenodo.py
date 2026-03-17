@@ -77,6 +77,9 @@ class ZenodoFile(ZenodoModel):
     """Model representing a file on a Zenodo record."""
 
 
+type ZenodoRecordState = Literal["done", "inprogress", "error", "unsubmitted"]
+
+
 class ZenodoRecord(ZenodoModel):
     """Model representing a Zenodo record.
 
@@ -89,7 +92,7 @@ class ZenodoRecord(ZenodoModel):
     id: int
     metadata: ZenodoMetadata
     links: ZenodoLinks
-    state: Literal["done", "inprogress", "error", "unsubmitted"]
+    state: ZenodoRecordState
     submitted: bool
 
     @property
