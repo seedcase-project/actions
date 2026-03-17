@@ -1,8 +1,8 @@
 from pathlib import Path
-from typing import Optional
+from typing import Literal, Optional, TypeVar, Union
 
 import requests
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, TypeAdapter
 
 from actions.internals import _filter, _map
 
@@ -65,10 +65,15 @@ class ZenodoLinks(ZenodoModel):
 
     Attributes:
         bucket: The file upload link for the record.
+        latest_draft: Link to the latest draft or the record.
     """
 
     # Published records cannot receive new file uploads
     bucket: Optional[str] = None
+    latest_draft: str
+
+
+type ZenodoRecordState = Literal["done", "inprogress", "error", "unsubmitted"]
 
 
 class ZenodoRecord(ZenodoModel):
@@ -83,6 +88,13 @@ class ZenodoRecord(ZenodoModel):
     id: int
     metadata: ZenodoMetadata
     links: ZenodoLinks
+    state: ZenodoRecordState
+    submitted: bool
+
+    @property
+    def editable(self) -> bool:
+        """Whether the record can be edited."""
+        return self.state in ["inprogress", "unsubmitted"]
 
 
 def zenodo_get_record(token: str) -> Optional[ZenodoRecord]:
@@ -163,3 +175,67 @@ def _get_repo_url() -> str:
         )
 
     return ids[0].identifier
+
+
+# Type of response returned by the Zenodo API
+ResponseType = TypeVar("ResponseType")
+
+
+class ZenodoClient:
+    """Class for interacting with the Zenodo API."""
+
+    def __init__(self, sandbox: bool, token: str, timeout: int = 30):
+        """Initialises the client.
+
+        Args:
+            sandbox: Whether to use the sandbox API or the real one.
+            token: Zenodo access token.
+            timeout: Request timeout in seconds.
+        """
+        self.headers = {"Authorization": f"Bearer {token}"}
+        self.timeout = timeout
+
+        host = "sandbox.zenodo" if sandbox else "zenodo"
+        self.depositions = f"https://{host}.org/api/deposit/depositions"
+
+    def _resolve(
+        self,
+        response: requests.Response,
+        response_type: Union[type[ResponseType], list[type[ResponseType]]],
+    ) -> ResponseType:
+        """Maps the API response to the given model."""
+        # TODO: include response.text in error because that is where Zenodo
+        # gives reasons
+        response.raise_for_status()
+        adapter: TypeAdapter[ResponseType] = TypeAdapter(response_type)
+        return adapter.validate_python(response.json())
+
+    def get_records(self) -> list[ZenodoRecord]:
+        """Gets all records.
+
+        Returns:
+            The list of all records.
+        """
+        response = requests.get(
+            self.depositions, headers=self.headers, timeout=self.timeout
+        )
+        return self._resolve(response, list[ZenodoRecord])
+
+    def get_record(self, record_id: Union[int, str]) -> ZenodoRecord:
+        """Gets the record with the given ID.
+
+        Args:
+            record_id: The ID of the record.
+
+        Returns:
+            The record.
+
+        Raises:
+            requests.exceptions.HTTPError: If there is no record with the given ID.
+        """
+        response = requests.get(
+            f"{self.depositions}/{record_id}",
+            headers=self.headers,
+            timeout=self.timeout,
+        )
+        return self._resolve(response, ZenodoRecord)
