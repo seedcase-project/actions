@@ -1,11 +1,12 @@
 import os
+from pathlib import Path
 
 from cyclopts import App
 
 from actions.zenodo import (
-    zenodo_create_record,
-    zenodo_record_exists,
-    zenodo_update_record,
+    ZenodoClient,
+    _load_zenodo_json,
+    zenodo_find_record_by_repo_url,
 )
 
 app = App(
@@ -17,6 +18,7 @@ app = App(
 )
 
 
+# TODO: add sandbox param
 @app.command()
 def zenodo_publish() -> None:
     """Publish a new version of the repository on Zenodo."""
@@ -24,9 +26,16 @@ def zenodo_publish() -> None:
     if not token:
         raise RuntimeError("ZENODO_TOKEN environment variable is not set.")
 
-    if zenodo_record_exists(token):
-        zenodo_update_record(token)
-        print("Zenodo record updated successfully!")
+    client = ZenodoClient(sandbox=True, token=token)
+    records = client.get_records()
+    metadata = _load_zenodo_json()
+    if record := zenodo_find_record_by_repo_url(records):
+        record = client.publish_updated_record(
+            record=record, metadata=metadata, file_path=Path("book.pdf")
+        )
+        print(f"Zenodo record updated successfully! New ID: {record.id}.")
     else:
-        zenodo_create_record(token)
-        print("New Zenodo record created successfully!")
+        record = client.publish_new_record(
+            metadata=metadata, file_path=Path("book.pdf")
+        )
+        print(f"New Zenodo record created successfully! ID: {record.id}")
