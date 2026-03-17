@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Literal, Optional, TypeVar, Union
+from typing import Literal, Optional, Union
 
 import requests
 from pydantic import BaseModel, ConfigDict, TypeAdapter
@@ -177,10 +177,6 @@ def _get_repo_url() -> str:
     return ids[0].identifier
 
 
-# Type of response returned by the Zenodo API
-ResponseType = TypeVar("ResponseType")
-
-
 class ZenodoClient:
     """Class for interacting with the Zenodo API."""
 
@@ -198,7 +194,7 @@ class ZenodoClient:
         host = "sandbox.zenodo" if sandbox else "zenodo"
         self.depositions = f"https://{host}.org/api/deposit/depositions"
 
-    def _resolve(
+    def _resolve[ResponseType](
         self,
         response: requests.Response,
         response_type: Union[type[ResponseType], list[type[ResponseType]]],
