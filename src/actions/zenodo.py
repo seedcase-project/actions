@@ -237,3 +237,42 @@ class ZenodoClient:
             timeout=self.timeout,
         )
         return self._resolve(response, ZenodoRecord)
+
+    def make_editable(self, record: ZenodoRecord) -> ZenodoRecord:
+        """Makes the record editable.
+
+        Args:
+            record: The record.
+
+        Returns:
+            The record in editable state.
+        """
+        if record.editable:
+            return record
+
+        response = requests.post(
+            f"{self.depositions}/{record.id}/actions/edit",
+            headers=self.headers,
+            timeout=self.timeout,
+        )
+        return self._resolve(response, ZenodoRecord)
+
+    def discard_draft(self, record: ZenodoRecord) -> None:
+        """Puts the record in a non-editable state by discarding all changes.
+
+        If the record's state is `unsubmitted`, the record is deleted.
+        If the record's state is `inprogress`, the record is restored to
+        the state when it was last published.
+
+        Args:
+            record: The record.
+        """
+        if not record.editable:
+            return None
+
+        response = requests.post(
+            f"{self.depositions}/{record.id}/actions/discard",
+            headers=self.headers,
+            timeout=self.timeout,
+        )
+        response.raise_for_status()

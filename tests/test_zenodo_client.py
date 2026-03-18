@@ -3,7 +3,7 @@ from typing import Any
 import pydantic
 import pytest
 import requests
-from pytest import raises
+from pytest import mark, raises
 
 from actions.examples import example_record
 from actions.zenodo import (
@@ -58,6 +58,31 @@ def mock_get_record(requests_mock):
     return _mock
 
 
+@pytest.fixture
+def mock_make_editable(requests_mock):
+    record = example_record()
+
+    def _mock(json=record.model_dump(), id=record.id, status_code=201):
+        return requests_mock.post(
+            f"{sandbox_client.depositions}/{id}/actions/edit",
+            json=json,
+            status_code=status_code,
+        )
+
+    return _mock
+
+
+@pytest.fixture
+def mock_discard_draft(requests_mock):
+    def _mock(id=example_record().id, status_code=204):
+        return requests_mock.post(
+            f"{sandbox_client.depositions}/{id}/actions/discard",
+            status_code=status_code,
+        )
+
+    return _mock
+
+
 # get_records
 
 
@@ -106,3 +131,64 @@ def test_get_record_failure(mock_get_record):
     mock_get_record({"unexpected": "response"})
     with raises(pydantic.ValidationError):
         sandbox_client.get_record(123)
+
+
+# make_editable
+
+
+@mark.parametrize("state", ["inprogress", "unsubmitted"])
+def test_make_editable_success_when_editable(mock_make_editable, state):
+    record = example_record(state=state)
+    mock = mock_make_editable()
+
+    result = sandbox_client.make_editable(record)
+
+    assert not mock.called
+    assert result.id == record.id
+
+
+def test_make_editable_success_when_not_editable(mock_make_editable):
+    record = example_record(state="done")
+    mock = mock_make_editable()
+
+    result = sandbox_client.make_editable(record)
+
+    assert_headers_correct(mock)
+    assert result.id == record.id
+
+
+def test_make_editable_failure(mock_make_editable):
+    record = example_record()
+    mock_make_editable(status_code=400)
+    with raises(requests.HTTPError):
+        sandbox_client.make_editable(record)
+
+    mock_make_editable({"unexpected": "response"})
+    with raises(pydantic.ValidationError):
+        sandbox_client.make_editable(record)
+
+
+# discard_draft
+
+
+@mark.parametrize("state", ["inprogress", "unsubmitted"])
+def test_discard_draft_success_when_editable(mock_discard_draft, state):
+    mock = mock_discard_draft()
+
+    sandbox_client.discard_draft(example_record(state=state))
+
+    assert_headers_correct(mock)
+
+
+def test_discard_draft_success_when_not_editable(mock_discard_draft):
+    mock = mock_discard_draft()
+
+    sandbox_client.discard_draft(example_record(state="done"))
+
+    assert not mock.called
+
+
+def test_discard_draft_failure(mock_discard_draft):
+    mock_discard_draft(status_code=400)
+    with raises(requests.HTTPError):
+        sandbox_client.discard_draft(example_record(state="inprogress"))
