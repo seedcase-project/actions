@@ -73,6 +73,10 @@ class ZenodoLinks(ZenodoModel):
     latest_draft: str
 
 
+class ZenodoFile(ZenodoModel):
+    """Model representing a file on a Zenodo record."""
+
+
 type ZenodoRecordState = Literal["done", "inprogress", "error", "unsubmitted"]
 
 
@@ -237,3 +241,35 @@ class ZenodoClient:
             timeout=self.timeout,
         )
         return self._resolve(response, ZenodoRecord)
+
+    def upload_file(self, record: ZenodoRecord, file_path: Path) -> ZenodoFile:
+        """Uploads a file to a record. The record must be unpublished.
+
+        Args:
+            record: The record.
+            file_path: The path to the file.
+
+        Returns:
+            The updated record.
+        """
+        if record.submitted:
+            raise ValueError(
+                f"Cannot upload new file to record {record.id} because the record "
+                "has already been published. You must first create a new version "
+                "of the record and upload the files there."
+            )
+
+        if not record.links.bucket:
+            raise ValueError(
+                f"Cannot upload new file to record {record.id} because the record "
+                "does not have a file-upload (bucket) link. "
+            )
+
+        with file_path.open("rb") as file_stream:
+            response = requests.put(
+                f"{record.links.bucket}/{file_path.name}",
+                data=file_stream,
+                headers=self.headers,
+                timeout=self.timeout,
+            )
+        return self._resolve(response, ZenodoFile)
