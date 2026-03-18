@@ -199,7 +199,7 @@ class ZenodoClient:
     def _resolve[ResponseType](
         self,
         response: requests.Response,
-        response_type: Union[type[ResponseType], list[type[ResponseType]]],
+        response_type: type[ResponseType],
     ) -> ResponseType:
         """Maps the API response to the given model."""
         # TODO: include response.text in error because that is where Zenodo
