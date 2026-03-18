@@ -3,7 +3,7 @@ from typing import Any
 import pydantic
 import pytest
 import requests
-from pytest import raises
+from pytest import mark, raises
 
 from actions.examples import example_record
 from actions.zenodo import (
@@ -51,6 +51,20 @@ def mock_get_record(requests_mock):
     def _mock(json=record.model_dump(), id=record.id, status_code=200):
         return requests_mock.get(
             f"{sandbox_client.depositions}/{id}",
+            json=json,
+            status_code=status_code,
+        )
+
+    return _mock
+
+
+@pytest.fixture
+def mock_publish(requests_mock):
+    record = example_record()
+
+    def _mock(json=record.model_dump(), id=record.id, status_code=202):
+        return requests_mock.post(
+            f"{sandbox_client.depositions}/{id}/actions/publish",
             json=json,
             status_code=status_code,
         )
@@ -106,3 +120,42 @@ def test_get_record_failure(mock_get_record):
     mock_get_record({"unexpected": "response"})
     with raises(pydantic.ValidationError):
         sandbox_client.get_record(123)
+
+
+# publish
+
+
+@mark.parametrize(
+    "record",
+    [
+        example_record(submitted=False, state="unsubmitted"),
+        example_record(submitted=True, state="inprogress"),
+    ],
+)
+def test_publish_success_unpublished(mock_publish, record):
+    mock = mock_publish()
+
+    result = sandbox_client.publish(record)
+
+    assert_headers_correct(mock)
+    assert result.id == 123
+
+
+def test_publish_success_published(mock_publish):
+    mock = mock_publish()
+
+    result = sandbox_client.publish(example_record(submitted=True, state="done"))
+
+    assert not mock.called
+    assert result.id == 123
+
+
+def test_publish_failure(mock_publish):
+    record = example_record(submitted=True, state="inprogress")
+    mock_publish(status_code=500)
+    with raises(requests.HTTPError):
+        sandbox_client.publish(record)
+
+    mock_publish({"unexpected": "response"})
+    with raises(pydantic.ValidationError):
+        sandbox_client.publish(record)

@@ -237,3 +237,22 @@ class ZenodoClient:
             timeout=self.timeout,
         )
         return self._resolve(response, ZenodoRecord)
+
+    def publish(self, record: ZenodoRecord) -> ZenodoRecord:
+        """Publishes a record.
+
+        Args:
+            record: The record.
+
+        Returns:
+            The published record.
+        """
+        if record.submitted and record.state == "done":
+            return record
+
+        response = requests.post(
+            f"{self.depositions}/{record.id}/actions/publish",
+            headers=self.headers,
+            timeout=self.timeout,
+        )
+        return self._resolve(response, ZenodoRecord)
