@@ -5,7 +5,7 @@ import pytest
 import requests
 from pytest import raises
 
-from actions.examples import example_record
+from actions.examples import example_metadata, example_record
 from actions.zenodo import (
     ZenodoClient,
 )
@@ -53,6 +53,16 @@ def mock_get_record(requests_mock):
             f"{sandbox_client.depositions}/{id}",
             json=json,
             status_code=status_code,
+        )
+
+    return _mock
+
+
+@pytest.fixture
+def mock_create_record(requests_mock):
+    def _mock(json=example_record().model_dump(), status_code=201):
+        return requests_mock.post(
+            sandbox_client.depositions, json=json, status_code=status_code
         )
 
     return _mock
@@ -106,3 +116,28 @@ def test_get_record_failure(mock_get_record):
     mock_get_record({"unexpected": "response"})
     with raises(pydantic.ValidationError):
         sandbox_client.get_record(123)
+
+
+# create_record
+
+
+def test_create_record_success(mock_create_record):
+    metadata = example_metadata()
+    mock = mock_create_record()
+
+    result = sandbox_client.create_record(metadata)
+
+    assert_headers_correct(mock)
+    assert result.id == 123
+    assert mock.last_request.json()["metadata"] == metadata.model_dump()
+
+
+def test_create_record_failure(mock_create_record):
+    metadata = example_metadata()
+    mock_create_record(status_code=400)
+    with raises(requests.HTTPError):
+        sandbox_client.create_record(metadata)
+
+    mock_create_record({"unexpected": "response"})
+    with raises(pydantic.ValidationError):
+        sandbox_client.create_record(metadata)

@@ -237,3 +237,20 @@ class ZenodoClient:
             timeout=self.timeout,
         )
         return self._resolve(response, ZenodoRecord)
+
+    def create_record(self, metadata: ZenodoMetadata) -> ZenodoRecord:
+        """Creates a new record in editable state.
+
+        Args:
+            metadata: The metadata of the new record.
+
+        Returns:
+            The newly created record.
+        """
+        response = requests.post(
+            self.depositions,
+            headers=self.headers,
+            json={"metadata": metadata.model_dump()},
+            timeout=self.timeout,
+        )
+        return self._resolve(response, ZenodoRecord)
