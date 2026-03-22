@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from pathlib import Path
+from typing import Any
 
 from pytest import MonkeyPatch, fixture, raises
 from requests import HTTPError
@@ -7,6 +8,10 @@ from requests_mock import ANY
 
 from actions.examples import example_metadata, example_record
 from actions.zenodo import (
+    ZenodoCreator,
+    ZenodoLinks,
+    ZenodoMetadata,
+    ZenodoRecord,
     ZenodoRelatedIdentifier,
     zenodo_get_record,
 )
