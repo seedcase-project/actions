@@ -51,6 +51,6 @@ dev = [
     "ruff>=0.15.15",
     "types-requests>=2.33.0.20260518",
     "types-tabulate>=0.10.0.20260508",
-    "typos>=1.46.0",
+    "typos>=1.48.0",
     "vulture>=2.15",
 ]
