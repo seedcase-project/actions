@@ -18,7 +18,7 @@ license-files = ["LICENSE.md"]
 requires-python = ">=3.12"
 dependencies = [
     "cyclopts>=4.20.0",
-    "pydantic>=2.13.3",
+    "pydantic>=2.13.4",
     "requests>=2.34.2",
 ]
 
