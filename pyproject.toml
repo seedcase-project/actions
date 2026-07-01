@@ -17,7 +17,7 @@ license = "MIT"
 license-files = ["LICENSE.md"]
 requires-python = ">=3.12"
 dependencies = [
-    "cyclopts>=4.8.0",
+    "cyclopts>=4.20.0",
     "pydantic>=2.13.3",
     "requests>=2.34.2",
 ]
